@@ -38,6 +38,7 @@ namespace Hearthstone
             }
         }
 
+
         [HarmonyPatch(typeof(Bed), "GetHoverText")]
         static class Bed_GetHoverText_Patch
         {

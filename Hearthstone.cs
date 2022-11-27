@@ -83,7 +83,7 @@ namespace Hearthstone
             writeDebugOutput = Config.Bind<bool>("Debug", "writeDebugOutput", true, "Write Debug output");
             allowTeleportWithoutRestriction = Config.Bind<bool>("General", "allowTeleportWithoutRestriction", false, "Allow teleport without restriction");
 
-            Debug(PluginGUID + " has awakened");
+            Debug(Assembly.GetExecutingAssembly().GetType().FullName + " has awakened");
 
             harmony.PatchAll();
             LoadAssets();
@@ -91,21 +91,17 @@ namespace Hearthstone
 
         private void Update()
         {
-            Player mLocalPlayer = Player.m_localPlayer;
+            var mLocalPlayer = Player.m_localPlayer;
             if (mLocalPlayer == null)
                 return;
 
             var hoverObject = mLocalPlayer.GetHoverObject();
-            if (hoverObject != null)
-            {
-                var componentInParent = hoverObject.GetComponentInParent<Interactable>();
-                if (IsOwner && componentInParent != null && componentInParent is Bed b)
-                    if (Input.GetKeyDown(KeyCode.P))
-                    {
-                        Hearthstone.SetHearthStonePosition();
-                        Player.m_localPlayer.Message(MessageHud.MessageType.Center, $"You have updated your HearthStone location", 0, null);
-                    }
-            }
+            if (hoverObject == null) return;
+            var componentInParent = hoverObject.GetComponentInParent<Interactable>();
+            if (!IsOwner || !(componentInParent is Bed b)) return;
+            if (!Input.GetKeyDown(KeyCode.P)) return;
+            Hearthstone.SetHearthStonePosition();
+            Player.m_localPlayer.Message(MessageHud.MessageType.Center, $"You have updated your HearthStone location", 0, null);
         }
 
         public static bool IsOwner { get; set; }
