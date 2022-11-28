@@ -34,8 +34,8 @@ writeDebugOutput | true / false | Indicates whether additional mod output will b
 
 ## Versions
 ### 1.0.2 
-+ changed the recipe needs to be able to limit to 1 or 2 materials 
-+ now the config is syncronized between client/server
++ changed the recipe to be able to be limited to 1 or 2 materials 
++ now the config is synchronized between client/server
 
 ### 1.0.1
 Working Version
