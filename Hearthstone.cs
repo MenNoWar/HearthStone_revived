@@ -1,24 +1,23 @@
-﻿using BepInEx;
-using BepInEx.Configuration;
+﻿using System.Collections.Generic;
 using HarmonyLib;
+using Jotunn.Configs;
 using Jotunn.Entities;
 using Jotunn.Managers;
 using Jotunn.Utils;
-using System;
-using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
+using System.Linq;
 using System.Reflection;
-using System.Resources;
-using System.Security.Permissions;
-using Jotunn.Configs;
-using UnityEngine;
+using BepInEx;
+using BepInEx.Configuration;
 using BepInEx.Logging;
+using UnityEngine;
+using static UnityEngine.GraphicsBuffer;
 
 namespace Hearthstone
 {
-    [BepInPlugin(Hearthstone.PluginGUID, "Hearthstone Revived", "1.0.1")]
-    [BepInProcess("valheim.exe")]
+    [BepInPlugin(Hearthstone.PluginGUID, "Hearthstone Revived", "1.0.2")]
+    [BepInDependency(Jotunn.Main.ModGuid)]
     public class Hearthstone : BaseUnityPlugin
     {
         public const string sharedName = "Hearthstone";
@@ -73,20 +72,62 @@ namespace Hearthstone
 
         private void Awake()
         {
-            item1 = Config.Bind<string>("General", "RecipeItem1", "BoneFragments", "Recipe item 1");
-            item2 = Config.Bind<string>("General", "RecipeItem2", "Coins", "Recipe item 2");
-            item3 = Config.Bind<string>("General", "RecipeItem3", "Crystal", "Recipe item 3");
+            item1 = Config.Bind<string>("General", "RecipeItem1", "BoneFragments",
+                new ConfigDescription("Recipe item 1 - leave blank for none", null,
+                    new ConfigurationManagerAttributes { IsAdminOnly = true }));
+            item1.SettingChanged += SettingsChanged;
+            item2 = Config.Bind<string>("General", "RecipeItem2", "Coins",
+                new ConfigDescription("Recipe item 2 - leave blank for none", null,
+                    new ConfigurationManagerAttributes { IsAdminOnly = true }));
+            item2.SettingChanged += SettingsChanged;
+            item3 = Config.Bind<string>("General", "RecipeItem3", "Crystal",
+                new ConfigDescription("Recipe item 3 - leave blank for none", null,
+                               new ConfigurationManagerAttributes { IsAdminOnly = true }));
+            item3.SettingChanged += SettingsChanged;
 
-            itemCost1 = Config.Bind<int>("General", "itemCost1", 10, "Recipe item 1 cost");
-            itemCost2 = Config.Bind<int>("General", "itemCost2", 30, "Recipe item 2 cost");
-            itemCost3 = Config.Bind<int>("General", "itemCost3", 3, "Recipe item 3 cost");
-            writeDebugOutput = Config.Bind<bool>("Debug", "writeDebugOutput", true, "Write Debug output");
-            allowTeleportWithoutRestriction = Config.Bind<bool>("General", "allowTeleportWithoutRestriction", false, "Allow teleport without restriction");
+            itemCost1 = Config.Bind<int>("General", "itemCost1", 10,
+                new ConfigDescription("Amount of item 1 required to craft the Hearthstone", null,
+                new ConfigurationManagerAttributes { IsAdminOnly = true }));
+            itemCost1.SettingChanged += SettingsChanged;
+            itemCost2 = Config.Bind<int>("General", "itemCost2", 30, new ConfigDescription("Amount of item 2 required to craft the Hearthstone", null,
+                new ConfigurationManagerAttributes { IsAdminOnly = true }));
+            itemCost2.SettingChanged += SettingsChanged;
+            itemCost3 = Config.Bind<int>("General", "itemCost3", 3, new ConfigDescription("Amount of item 3 required to craft the Hearthstone", null,
+                new ConfigurationManagerAttributes { IsAdminOnly = true }));
+            itemCost3.SettingChanged += SettingsChanged;
+
+            writeDebugOutput = Config.Bind<bool>("Debug", "writeDebugOutput", true, new ConfigDescription("Write debug output?", null,
+                new ConfigurationManagerAttributes { IsAdminOnly = true }));
+            writeDebugOutput.SettingChanged += SettingsChanged;
+            allowTeleportWithoutRestriction = Config.Bind<bool>("General", "allowTeleportWithoutRestriction", false,
+                new ConfigDescription("Allow teleport without restriction", null,
+                    new ConfigurationManagerAttributes { IsAdminOnly = true }));
+            allowTeleportWithoutRestriction.SettingChanged += SettingsChanged;
 
             Debug(Assembly.GetExecutingAssembly().GetType().FullName + " has awakened");
 
             harmony.PatchAll();
+
             LoadAssets();
+
+            SynchronizationManager.OnConfigurationSynchronized += SynchronizationManager_OnConfigurationSynchronized;
+            SynchronizationManager.OnAdminStatusChanged += SynchronizationManager_OnAdminStatusChanged; ;
+        }
+
+        private void SettingsChanged(object sender, System.EventArgs e)
+        {
+            AddOrUpdateHearthStoneRecipe();
+        }
+
+        private void SynchronizationManager_OnAdminStatusChanged()
+        {
+            Debug(SynchronizationManager.Instance.PlayerIsAdmin ? "No Admin anymore" : "You are admin");
+        }
+
+        private void SynchronizationManager_OnConfigurationSynchronized(object sender, ConfigurationSynchronizationEventArgs e)
+        {
+            Debug(e.InitialSynchronization ? "Recieved Initial Config" : "Updated Config");
+            AddOrUpdateHearthStoneRecipe();
         }
 
         private void Update()
@@ -109,7 +150,7 @@ namespace Hearthstone
         private void LoadAssets()
         {
             GetHearthStonePositionString();
-            PrefabManager.OnVanillaPrefabsAvailable += AddClonedItems;
+            PrefabManager.OnVanillaPrefabsAvailable += AddOrUpdateHearthStoneRecipe;
         }
 
         private static string m_BaseDir = string.Empty;
@@ -129,38 +170,94 @@ namespace Hearthstone
             }
         }
 
-        private void AddClonedItems()
+        private void AddOrUpdateHearthStoneRecipe()
         {
             var spritePath = Path.Combine(BaseDir, "Assets");
-            Sprite var1 = AssetUtils.LoadSpriteFromFile(Path.Combine(spritePath, "heart.png"));
+            var var1 = AssetUtils.LoadSpriteFromFile(Path.Combine(spritePath, "heart.png"));
+            var tex = AssetUtils.LoadTexture(Path.Combine(spritePath, "heart.png"));
 
-            ItemConfig shieldConfig = new ItemConfig();
-            shieldConfig.Name = sharedName;
-            shieldConfig.Description = ".. and Dorothy clicked her heels together twice .. ";
-            shieldConfig.Requirements = new[]
+            /// check if updating the recipe is enough:
+            if (ItemManager.Instance != null && ItemManager.Instance.GetItem(sharedName) is CustomItem item && item.Recipe != null)
             {
-                new RequirementConfig {
-                    Amount = itemCost1.Value,
-                    Item = item1.Value
-                },
-                new RequirementConfig {
-                    Amount = itemCost2.Value,
-                    Item = item2.Value
-                },
-                new RequirementConfig {
-                    Amount = itemCost3.Value,
-                    Item = item3.Value
+                var rqs = new List<Piece.Requirement>();
+                
+                // Helperfunction to check for correct name of item, name existence and amount
+                void AddRQ(string name, int amount)
+                {
+                    if (!string.IsNullOrEmpty(name) && amount > 0)
+                    {
+                        // for efficiency this would be a better solution: ObjectDB.instance.GetItemPrefab(name.GetStableHashCode()).GetComponent<ItemDrop>()
+                        // but as the update is only when the config gets updated. Thanks to Margmas!
+                        var itemDrop = ObjectDB.instance.GetAllItems(ItemDrop.ItemData.ItemType.Material, name).FirstOrDefault();
+                        if (itemDrop != null)
+                        {
+                            rqs.Add(new Piece.Requirement
+                            {
+                                m_amount = amount,
+                                m_resItem = itemDrop
+                            });
+                        }
+                    }
                 }
+
+                AddRQ(item1.Value, itemCost1.Value);
+                AddRQ(item2.Value, itemCost2.Value);
+                AddRQ(item3.Value, itemCost3.Value);
+                
+                item.Recipe.Recipe.m_resources = rqs.ToArray();
+
+                return;
+            }
+
+            // does the same as AddRQ, but this time as RequirementConfig.
+            RequirementConfig[] buildRequirementConfigs()
+            {
+                var list = new List<RequirementConfig>();
+                if (itemCost1.Value > 0 && !string.IsNullOrEmpty(item1.Value))
+                {
+                    list.Add(new RequirementConfig
+                    {
+                        Amount = itemCost1.Value,
+                        Item = item1.Value
+                    });
+                }
+
+                if (itemCost2.Value > 0 && !string.IsNullOrEmpty(item2.Value))
+                {
+                    list.Add(new RequirementConfig
+                    {
+                        Amount = itemCost2.Value,
+                        Item = item2.Value
+                    });
+                }
+
+                if (itemCost3.Value > 0 && !string.IsNullOrEmpty(item3.Value))
+                {
+                    list.Add(new RequirementConfig
+                    {
+                        Amount = itemCost3.Value,
+                        Item = item3.Value
+                    });
+                }
+
+                return list.ToArray();
+            }
+
+            ItemConfig shieldConfig = new ItemConfig
+            {
+                Name = sharedName,
+                Description = ".. and Dorothy clicked her heels together twice .. ",
+                Requirements = buildRequirementConfigs(),
+                Icons = new Sprite[] { var1 },
+                StyleTex = tex
             };
 
-
-            shieldConfig.Icons = new Sprite[] { var1 };
-            /* shieldConfig.StyleTex = styleTex; */
-            var customItem = new CustomItem($"item_{sharedName}", "YagluthDrop", shieldConfig);
+            var customItem = new CustomItem($"{sharedName}", "YagluthDrop", shieldConfig);
             customItem.ItemDrop.m_itemData.m_shared.m_itemType = ItemDrop.ItemData.ItemType.Consumable;
+
             ItemManager.Instance.AddItem(customItem);
 
-            PrefabManager.OnVanillaPrefabsAvailable -= AddClonedItems;
+            PrefabManager.OnVanillaPrefabsAvailable -= AddOrUpdateHearthStoneRecipe;
         }
 
         public static Vector3 GetHearthStonePosition()

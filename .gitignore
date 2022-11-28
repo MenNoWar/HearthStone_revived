@@ -348,3 +348,7 @@ MigrationBackup/
 
 # Ionide (cross platform F# VS Code tools) working folder
 .ionide/
+/Publish_Template/Hearthstone.dll
+/Publish_Template/Hearthstone_Revived.zip
+/Publish_Template/Assets/heart.png
+/Publish_Template/README.md
