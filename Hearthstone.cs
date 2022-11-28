@@ -188,7 +188,7 @@ namespace Hearthstone
                     {
                         // for efficiency this would be a better solution: ObjectDB.instance.GetItemPrefab(name.GetStableHashCode()).GetComponent<ItemDrop>()
                         // but as the update is only when the config gets updated. Thanks to Margmas!
-                        var itemDrop = ObjectDB.instance.GetAllItems(ItemDrop.ItemData.ItemType.Material, name).FirstOrDefault();
+                        var itemDrop = ObjectDB.instance == null ? null : ObjectDB.instance.GetAllItems(ItemDrop.ItemData.ItemType.Material, name).FirstOrDefault();
                         if (itemDrop != null)
                         {
                             rqs.Add(new Piece.Requirement

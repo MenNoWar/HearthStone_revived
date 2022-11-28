@@ -109,9 +109,9 @@ if $(ConfigurationName) == Debug $(SolutionDir)pdb2mdb.exe "$(TargetPath)"
       
 xcopy "$(TargetDir)" "$(GameDir)\Bepinex\plugins\$(ProjectName)\" /q /s /y /i
 
-if $(ConfigurationName) == Release copy $(SolutionDir)Assets\heart.png  $(SolutionDir)Publish_Template\Assets
+if $(ConfigurationName) == Release copy $(SolutionDir)Assets\heart.png  $(SolutionDir)Publish_Template\plugins\Assets
 if $(ConfigurationName) == Release copy $(SolutionDir)README.md  $(SolutionDir)Publish_Template
-if $(ConfigurationName) == Release copy $(TargetPath) $(SolutionDir)Publish_Template
+if $(ConfigurationName) == Release copy $(TargetPath) $(SolutionDir)Publish_Template\plugins
 
 if $(ConfigurationName) == Release del "$(ProjectDir)Publish_Template\$(ProjectName).zip"
 if $(ConfigurationName) == Release (powershell Compress-Archive -Path '$(ProjectDir)Publish_Template\*' -DestinationPath '$(ProjectDir)Publish_Template\$(ProjectName).zip' -Force)</PostBuildEvent>

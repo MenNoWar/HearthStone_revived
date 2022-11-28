@@ -31,6 +31,9 @@ setting | value | meaning
 --------|-------|--------
 writeDebugOutput | true / false | Indicates whether additional mod output will be written to the console
 
+## Versions
+### 1.0.3
++ hotfix for missing HS icon
 
 ## Versions
 ### 1.0.2 

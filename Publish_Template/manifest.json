@@ -1,6 +1,6 @@
 {
     "name": "HearthStone_Revived",
-    "version_number": "1.0.2",
+    "version_number": "1.0.3",
     "website_url": "https://github.com/MenNoWar/HearthStone_revived",
     "description": "This is a revive of the old HearthStone Mod from Detalhes.This adds a consumable heart that allows you create and use a custom teleport point",
     "dependencies": [
