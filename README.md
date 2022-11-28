@@ -1,25 +1,25 @@
-# Hearthstone
+# HearthStone
 
 ## What..
-Hearthstone adds a consumable stone that brings you back home.
+HearthStone adds a consumable stone that brings you back home.
 
-- You can set any bed of yours to be the Hearthstone stone "spawn" point
-- You can craft hearthstone in workbench with configurable items
-- Now the hearthstone is a heart
+- You can set any bed of yours to be the Hearthstone "spawn" point
+- You can craft Hearthstone in your Backpack with configurable items
+- Now the HearthStone is a heart stone
 
-It must be installed in the server and the client.
+The Mod must be installed in the server and the client.
 
 ## Config
 
 ### Section [General]
 setting | value | meaning
 --------|-------|--------
-RecipeItem1 | string | The ItemName of the 1st item needed to craft the HS
-RecipeItem2 | string | The ItemName of the 2nd item needed to craft the HS
-RecipeItem3 | string | The ItemName of the 3rd item needed to craft the HS
+RecipeItem1 | string | The ItemName (PrefabName) of the 1st item needed to craft the HS
+RecipeItem2 | string | The ItemName (PrefabName) of the 2nd item needed to craft the HS
+RecipeItem3 | string | The ItemName (PrefabName) of the 3rd item needed to craft the HS
 itemCost1 | int | The amount of the 1st item needed to craft the HS
 itemCost2 | int | The amount of the 2nd item needed to craft the HS
-itemCost3 | int | The amount of the 2rd item needed to craft the HS
+itemCost3 | int | The amount of the 3rd item needed to craft the HS
 allowTeleportWithoutRestriction | true / false | when set to false HS will respect the teleport limitations iE metal in inventory
 
 #### Hint: 
@@ -36,6 +36,7 @@ writeDebugOutput | true / false | Indicates whether additional mod output will b
 ### 1.0.2 
 + changed the recipe to be able to be limited to 1 or 2 materials 
 + now the config is synchronized between client/server
++ updated ingame icon
 
 ### 1.0.1
 Working Version
