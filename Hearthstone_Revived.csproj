@@ -57,6 +57,9 @@
     <Content Include="Assets\heart.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Content Include="Assets\heart_item.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
   <ItemGroup>
     <Reference Include="0Harmony, Version=2.10.1.0, Culture=neutral, processorArchitecture=MSIL">
@@ -80,10 +83,6 @@
     </Reference>
     <Reference Include="BepInEx">
       <HintPath>$(GameDir)\BepInEx\core\BepInEx.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
-    <Reference Include="BepInEx.Harmony">
-      <HintPath>$(GameDir)\BepInEx\core\BepInEx.Harmony.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="System" />
@@ -110,6 +109,7 @@ if $(ConfigurationName) == Debug $(SolutionDir)pdb2mdb.exe "$(TargetPath)"
 xcopy "$(TargetDir)" "$(GameDir)\Bepinex\plugins\$(ProjectName)\" /q /s /y /i
 
 if $(ConfigurationName) == Release copy $(SolutionDir)Assets\heart.png  $(SolutionDir)Publish_Template\plugins\Assets
+if $(ConfigurationName) == Release copy $(SolutionDir)Assets\heart_item.png  $(SolutionDir)Publish_Template\plugins\Assets
 if $(ConfigurationName) == Release copy $(SolutionDir)README.md  $(SolutionDir)Publish_Template
 if $(ConfigurationName) == Release copy $(TargetPath) $(SolutionDir)Publish_Template\plugins
 

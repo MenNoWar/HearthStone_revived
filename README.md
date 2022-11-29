@@ -32,10 +32,13 @@ setting | value | meaning
 writeDebugOutput | true / false | Indicates whether additional mod output will be written to the console
 
 ## Versions
+### 1.0.4
++ changed base item to be Stone, not Yagluth Thing anymore
++ added correct overlay texture
+
 ### 1.0.3
 + hotfix for missing HS icon
 
-## Versions
 ### 1.0.2 
 + changed the recipe to be able to be limited to 1 or 2 materials 
 + now the config is synchronized between client/server

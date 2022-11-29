@@ -173,9 +173,10 @@ namespace Hearthstone
         private void AddOrUpdateHearthStoneRecipe()
         {
             var spritePath = Path.Combine(BaseDir, "Assets");
-            var var1 = AssetUtils.LoadSpriteFromFile(Path.Combine(spritePath, "heart.png"));
-            var tex = AssetUtils.LoadTexture(Path.Combine(spritePath, "heart.png"));
 
+            var var1 = AssetUtils.LoadSpriteFromFile(Path.Combine(spritePath, "heart.png"));
+            var tex = AssetUtils.LoadTexture(Path.Combine(spritePath, "heart_item.png"));
+            
             /// check if updating the recipe is enough:
             if (ItemManager.Instance != null && ItemManager.Instance.GetItem(sharedName) is CustomItem item && item.Recipe != null)
             {
@@ -249,11 +250,12 @@ namespace Hearthstone
                 Description = ".. and Dorothy clicked her heels together twice .. ",
                 Requirements = buildRequirementConfigs(),
                 Icons = new Sprite[] { var1 },
-                StyleTex = tex
+                StyleTex = tex,
             };
 
-            var customItem = new CustomItem($"{sharedName}", "YagluthDrop", shieldConfig);
+            var customItem = new CustomItem($"{sharedName}", "Stone", shieldConfig);
             customItem.ItemDrop.m_itemData.m_shared.m_itemType = ItemDrop.ItemData.ItemType.Consumable;
+            customItem.ItemDrop.m_itemData.m_shared.m_maxStackSize = 10;
 
             ItemManager.Instance.AddItem(customItem);
 
