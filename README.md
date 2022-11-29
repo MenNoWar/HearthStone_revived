@@ -32,9 +32,14 @@ setting | value | meaning
 writeDebugOutput | true / false | Indicates whether additional mod output will be written to the console
 
 ## Versions
+### 1.0.5
++ moved from using ingame Stone to Assetbundle with own mesh
++ some code improvements
+
 ### 1.0.4
 + changed base item to be Stone, not Yagluth Thing anymore
 + added correct overlay texture
++ removed old image files
 
 ### 1.0.3
 + hotfix for missing HS icon

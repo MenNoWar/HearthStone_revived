@@ -44,6 +44,8 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
+    <EmbeddedResource Include="Assets\hs" />
+    <None Include="GameDir.targets" />
     <None Include="README.md" />
   </ItemGroup>
   <ItemGroup>
@@ -52,14 +54,6 @@
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Core" />
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="Assets\heart.png">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Assets\heart_item.png">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
   </ItemGroup>
   <ItemGroup>
     <Reference Include="0Harmony, Version=2.10.1.0, Culture=neutral, processorArchitecture=MSIL">
@@ -77,6 +71,10 @@
     <Reference Include="MonoMod.Utils, Version=22.5.1.1, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>packages\MonoMod.Utils.22.5.1.1\lib\net452\MonoMod.Utils.dll</HintPath>
     </Reference>
+    <Reference Include="UnityEngine">
+      <HintPath>$(GameDir)\valheim_Data\Managed\UnityEngine.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
     <Reference Include="assembly_valheim">
       <HintPath>$(GameDir)\valheim_Data\Managed\assembly_valheim.dll</HintPath>
       <Private>False</Private>
@@ -89,6 +87,10 @@
     <Reference Include="System.Core" />
     <Reference Include="UnityEngine">
       <HintPath>$(GameDir)\valheim_Data\Managed\UnityEngine.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="UnityEngine.AssetBundleModule">
+      <HintPath>$(GameDir)\valheim_Data\Managed\UnityEngine.AssetBundleModule.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="UnityEngine.CoreModule">
@@ -106,13 +108,11 @@
     <PostBuildEvent>if $(ConfigurationName) == Debug del "$(TargetPath).mdb"
 if $(ConfigurationName) == Debug $(SolutionDir)pdb2mdb.exe "$(TargetPath)"
       
-xcopy "$(TargetDir)" "$(GameDir)\Bepinex\plugins\$(ProjectName)\" /q /s /y /i
+copy "$(TargetPath)" "$(GameDir)\Bepinex\plugins\$(TargetFileName)"
+if $(ConfigurationName) == Debug copy "$(TargetPath).mdb" "$(GameDir)\Bepinex\plugins\$(TargetFileName).mdb"
 
-if $(ConfigurationName) == Release copy $(SolutionDir)Assets\heart.png  $(SolutionDir)Publish_Template\plugins\Assets
-if $(ConfigurationName) == Release copy $(SolutionDir)Assets\heart_item.png  $(SolutionDir)Publish_Template\plugins\Assets
 if $(ConfigurationName) == Release copy $(SolutionDir)README.md  $(SolutionDir)Publish_Template
-if $(ConfigurationName) == Release copy $(TargetPath) $(SolutionDir)Publish_Template\plugins
-
+if $(ConfigurationName) == Release copy $(TargetPath) $(SolutionDir)Publish_Template\
 if $(ConfigurationName) == Release del "$(ProjectDir)Publish_Template\$(ProjectName).zip"
 if $(ConfigurationName) == Release (powershell Compress-Archive -Path '$(ProjectDir)Publish_Template\*' -DestinationPath '$(ProjectDir)Publish_Template\$(ProjectName).zip' -Force)</PostBuildEvent>
   </PropertyGroup>
