@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using HarmonyLib;
 using Jotunn.Configs;
 using Jotunn.Entities;
@@ -105,7 +106,7 @@ namespace Hearthstone
 
             GetHearthStonePositionString();
 
-            PrefabManager.OnVanillaPrefabsAvailable += AddOrUpdateHearthStoneRecipe; // create the item on start, recipe follows later
+            PrefabManager.OnVanillaPrefabsAvailable += AddOrUpdateHearthStoneItem; // create the item on start, recipe follows later
             ItemManager.OnItemsRegistered += ItemManager_OnItemsRegistered;          // at this point it should be safe to create the configurable recipe
 
             SynchronizationManager.OnConfigurationSynchronized += SynchronizationManager_OnConfigurationSynchronized;
@@ -123,6 +124,7 @@ namespace Hearthstone
             GenerateRecipe();
         }
 
+        [SuppressMessage("ReSharper", "UnusedMember.Local")]
         private void Update()
         {
             var mLocalPlayer = Player.m_localPlayer;
@@ -169,17 +171,25 @@ namespace Hearthstone
             // Helperfunction to check for correct name of item, name existence and amount
             void AddRq(ConfigEntry<string> item, ConfigEntry<int> amount)
             {
-                if (item != null && !string.IsNullOrEmpty(item.Value) && amount.Value > 0)
+                try
                 {
-                    var itemDrop = ObjectDB.instance.GetItemPrefab(item.Value).GetComponent<ItemDrop>(); // Thanks to Margmas!
-                    if (itemDrop != null)
+                    if (item != null && !string.IsNullOrEmpty(item.Value) && amount.Value > 0)
                     {
-                        rqs.Add(new Piece.Requirement
+
+                        var itemDrop = ObjectDB.instance.GetItemPrefab(item.Value).GetComponent<ItemDrop>(); // Thanks to Margmas!
+                        if (itemDrop != null)
                         {
-                            m_amount = amount.Value,
-                            m_resItem = itemDrop
-                        });
+                            rqs.Add(new Piece.Requirement
+                            {
+                                m_amount = amount.Value,
+                                m_resItem = itemDrop
+                            });
+                        }
                     }
+                }
+                catch (Exception ex)
+                {
+                    Debug(ex.Message);
                 }
             }
 
@@ -191,12 +201,12 @@ namespace Hearthstone
                 m_hearthStoneItem.Recipe.Recipe.m_resources = rqs.ToArray();
         }
 
-        private void AddOrUpdateHearthStoneRecipe()
+        private void AddOrUpdateHearthStoneItem()
         {
             if (m_hearthStoneItem == null)
             {
                 var bundle = AssetUtils.LoadAssetBundleFromResources("hs", typeof(Hearthstone).Assembly);
-                
+
                 if (bundle == null)
                 {
                     Jotunn.Logger.LogWarning("Bundle could not be loaded!");

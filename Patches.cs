@@ -33,7 +33,7 @@ namespace Hearthstone
 
                     Player.m_localPlayer.TeleportTo(teleportPosition, Player.m_localPlayer.transform.rotation, true);
                 }
-
+                
                 return true;
             }
         }
@@ -60,6 +60,21 @@ namespace Hearthstone
                     Hearthstone.IsOwner = false;
                 }
             }
-        }       
+        }
+
+        [HarmonyPatch(typeof(ItemStand), "CanAttach")]
+        public static class AttachPatch
+        {
+            [HarmonyPostfix]
+            private static void Postfix(ItemStand __instance, ItemDrop.ItemData item, ref bool __result)
+            {
+                if (!__result)
+                {
+                    var name = item?.m_shared?.m_name;
+                    if (!string.IsNullOrEmpty(name))
+                        __result = name == Hearthstone.sharedName;
+                }
+            }
+        }
     }
 }

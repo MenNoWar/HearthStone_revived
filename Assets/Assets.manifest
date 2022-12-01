@@ -1,7 +1,10 @@
 ManifestFileVersion: 0
-CRC: 2031983583
+CRC: 2950623183
 AssetBundleManifest:
   AssetBundleInfos:
     Info_0:
+      Name: bottles
+      Dependencies: {}
+    Info_1:
       Name: hs
       Dependencies: {}
