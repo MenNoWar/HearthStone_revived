@@ -6,6 +6,7 @@ HearthStone adds a consumable stone that brings you back home.
 - You can set any bed of yours to be the Hearthstone "spawn" point
 - You can craft Hearthstone in your Backpack with configurable items
 - Now the HearthStone is a heart stone
+- May be attached to item stands
 
 The Mod must be installed in the server and the client.
 
@@ -34,7 +35,10 @@ writeDebugOutput | true / false | Indicates whether additional mod output will b
 ## Versions
 ### 1.0.5
 + moved from using ingame Stone to Assetbundle with own mesh
++ implemented new texture
 + some code improvements
++ stones may be attached to horizontal and vertical item stand
++ leaving recipe item empty should no longer produce an error on the console
 
 ### 1.0.4
 + changed base item to be Stone, not Yagluth Thing anymore
@@ -57,5 +61,5 @@ Initial Version
 
 ## Thanks..
 .. go to [Detalhes](https://valheim.thunderstore.io/package/Detalhes/) for the [original mod](https://valheim.thunderstore.io/package/Detalhes/Hearthstone/)
-
+.. the great community of the J&ouml;tunn  mod
 .. and to beloved "<b>schattentraum</b>" for her wish to have a current working version
