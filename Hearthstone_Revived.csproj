@@ -46,6 +46,7 @@
     <None Include="app.config" />
     <EmbeddedResource Include="Assets\hs" />
     <None Include="GameDir.targets" />
+    <None Include="Publish_Template\manifest.json" />
     <None Include="README.md" />
   </ItemGroup>
   <ItemGroup>
@@ -102,11 +103,12 @@
       <Private>False</Private>
     </Reference>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Content Include="Publish_Template\icon.png" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PostBuildEvent>if $(ConfigurationName) == Debug del "$(TargetPath).mdb"
-if $(ConfigurationName) == Debug $(SolutionDir)pdb2mdb.exe "$(TargetPath)"
+    <PostBuildEvent>if $(ConfigurationName) == Debug $(SolutionDir)pdb2mdb.exe "$(TargetPath)"
       
 if $(ConfigurationName) == Debug copy "$(TargetPath)" "$(GameDir)\Bepinex\plugins\$(TargetFileName)"
 if $(ConfigurationName) == Debug copy "$(TargetPath).mdb" "$(GameDir)\Bepinex\plugins\$(TargetFileName).mdb"
@@ -115,5 +117,11 @@ if $(ConfigurationName) == Release copy $(SolutionDir)README.md  $(SolutionDir)P
 if $(ConfigurationName) == Release copy $(TargetPath) $(SolutionDir)Publish_Template\
 if $(ConfigurationName) == Release del "$(ProjectDir)Publish_Template\$(ProjectName).zip"
 if $(ConfigurationName) == Release (powershell Compress-Archive -Path '$(ProjectDir)Publish_Template\*' -DestinationPath '$(ProjectDir)Publish_Template\$(ProjectName).zip' -Force)</PostBuildEvent>
+  </PropertyGroup>
+  <PropertyGroup>
+    <PreBuildEvent>del "$(SolutionDir)\publish_template\*.zip"
+del "$(SolutionDir)\publish_template\*.dll"
+del "$(SolutionDir)\publish_template\README.md"
+del "$(TargetPath).mdb"</PreBuildEvent>
   </PropertyGroup>
 </Project>

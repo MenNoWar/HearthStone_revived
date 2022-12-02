@@ -39,6 +39,7 @@ writeDebugOutput | true / false | Indicates whether additional mod output will b
 + some code improvements
 + stones may be attached to horizontal and vertical item stand
 + leaving recipe item empty should no longer produce an error on the console
++ removed falsely assigned "pickable" script from asset which prevented picking up a dropped Hearthstone
 
 ### 1.0.4
 + changed base item to be Stone, not Yagluth Thing anymore
@@ -61,5 +62,5 @@ Initial Version
 
 ## Thanks..
 .. go to [Detalhes](https://valheim.thunderstore.io/package/Detalhes/) for the [original mod](https://valheim.thunderstore.io/package/Detalhes/Hearthstone/)
-.. the great community of the J&ouml;tunn  mod
+.. to the great, supporting [community of the J&ouml;tunn Mod](https://discord.gg/DdUt6g7gyA) - you are awesome!
 .. and to beloved "<b>schattentraum</b>" for her wish to have a current working version
