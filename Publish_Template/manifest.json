@@ -1,10 +1,10 @@
 {
     "name": "HearthStone_Revived",
-    "version_number": "1.0.6",
+    "version_number": "1.0.7",
     "website_url": "https://github.com/MenNoWar/HearthStone_revived",
     "description": "This is a revive of the old HearthStone Mod from Detalhes.This adds a consumable heart that allows you create and use a custom teleport point",
-    "dependencies": [
-        "denikson-BepInExPack_Valheim-5.4.1901",
-        "ValheimModding-Jotunn-2.10.4"
-    ]
+  "dependencies": [
+    "denikson-BepInExPack_Valheim-5.4.2202",
+    "ValheimModding-Jotunn-2.23.2"
+  ]
 }

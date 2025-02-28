@@ -33,9 +33,11 @@ setting | value | meaning
 writeDebugOutput | true / false | Indicates whether additional mod output will be written to the console
 
 ## Versions
+### 1.0.7
++ updated Version Reference for Jotunn to be 2.23.2
++ 
 ### 1.0.6
 + updated Version Reference for Jotunn to be 2.10.4
-
 
 ### 1.0.5
 + moved from using ingame Stone to Assetbundle with own mesh

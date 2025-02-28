@@ -20,8 +20,8 @@ using static System.Net.Mime.MediaTypeNames;
 
 namespace Hearthstone
 {
-    [BepInPlugin(Hearthstone.PluginGUID, "Hearthstone Revived", "1.0.6")]
-    [BepInDependency(Jotunn.Main.ModGuid, "2.10.4")]
+    [BepInPlugin(Hearthstone.PluginGUID, "Hearthstone Revived", "1.0.7")]
+    [BepInDependency(Jotunn.Main.ModGuid, "2.23.2")]
     public class Hearthstone : BaseUnityPlugin
     {
         public const string sharedName = "Hearthstone";
